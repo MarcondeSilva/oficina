@@ -1,4 +1,262 @@
-ppendChild(msg);
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel TV Atendimento - Auri Autopeças</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Glassmorphism Effect */
+        .glass-panel {
+            background-color: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 2rem;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+            z-index: -1;
+        }
+        
+        .header-bg {
+            background: linear-gradient(to right, #1a202c, #2d3748);
+        }
+
+        .gradient-border {
+            border-image: linear-gradient(to right, #facc15, #fde047) 1;
+            border-width: 2px;
+            border-style: solid;
+            border-radius: 2rem;
+        }
+
+        /* Animação radical de flip vertical e brilho */
+        @keyframes flip-and-flash {
+            0% { 
+                transform: rotateX(0deg) scale(1);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 0 rgba(250, 204, 21, 0); 
+            }
+            50% { 
+                transform: rotateX(180deg) scale(1.02); 
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 50px rgba(250, 204, 21, 0.8);
+            }
+            100% { 
+                transform: rotateX(360deg) scale(1); 
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 0 rgba(250, 204, 21, 0); 
+            }
+        }
+        
+        /* Nova animação sutil para o painel principal */
+        @keyframes pulse-subtle {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.005); opacity: 0.98; }
+        }
+
+        .flash {
+            animation: flip-and-flash 1.5s ease-out 1;
+        }
+
+        .mensagem-anim {
+            animation: fadeIn 0.8s ease;
+        }
+        
+        .anim-cimas { animation: entrarCima 1.5s forwards; }
+        .anim-baixo { animation: entrarBaixo 1.5s forwards; }
+        .anim-esq { animation: entrarEsq 1.5s forwards; }
+        .anim-dir { animation: entrarDir 1.5s forwards; }
+        @keyframes entrarCima { 0%{transform:translateY(-120%);opacity:0} 50%{opacity:1} 100%{transform:translateY(0);opacity:1} }
+        @keyframes entrarBaixo { 0%{transform:translateY(120%);opacity:0} 50%{opacity:1} 100%{transform:translateY(0);opacity:1} }
+        @keyframes entrarEsq { 0%{transform:translateX(-120%);opacity:0} 50%{opacity:1} 100%{transform:translateX(0);opacity:1} }
+        @keyframes entrarDir { 0%{transform:translateX(120%);opacity:0} 50%{opacity:1} 100%{transform:translateX(0);opacity:1} }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+
+
+        /* Aplica a nova animação ao painel principal */
+        #principal.glass-panel {
+            animation: pulse-subtle 6s ease-in-out infinite;
+        }
+
+        /* Estilos para o vídeo mudo invisível */
+        #silent-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-950 text-white min-h-screen flex items-center justify-center p-4">
+
+<video id="silent-video" autoplay loop muted playsinline>
+    <source src="data:video/mp4;base64,AAAAHGZ0eXBNNHZtYmlzb21uaXNvbXYzYXZjMWF2YzFoNjZpc2FtYXYxY21mcGF1ZHRjZXJvAAAAIGNkYXBlAAAAIGxpYmF2YzEAAAAIaGRsaHI6c291bmQAAAAAAABhYXZjMQAAAAAAAABzb25kAAAABGhkbHIAAAAAAABkbHRzAAAAJGFkYXBlAAAAFGxpYmF2YzEgZ29vZ2xlIHRpbmdhAAAAAExlYwAAAAAAAm9sYXAAAGdlbmRyAAAABGJpdHMBAAIAAAAGc2Ftcm0B" type="video/mp4">
+</video>
+
+<div class="container relative w-full h-[95vh] max-w-7xl mx-auto flex flex-col gap-5 rounded-[2rem] p-8 shadow-2xl bg-gray-900 border border-gray-700">
+    <div class="header flex justify-between items-center pb-5 border-b border-gray-700 h-[70px]">
+        <div class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center gap-3">
+            <i class="fas fa-car-side text-white"></i> Auri Autopeças
+        </div>
+        <div class="text-gray-400 flex items-center gap-2 text-lg">
+            <i class="fas fa-phone-alt text-yellow-400"></i> Tel: 84 3087.0000
+        </div>
+    </div>
+    
+    <div class="main-content flex flex-col lg:flex-row gap-5 h-[calc(100%-70px-4rem)]">
+        <div id="principal" class="principal relative flex-grow glass-panel p-8 flex flex-col justify-center items-center overflow-hidden transition-all duration-300">
+            <div id="relogio" class="absolute top-5 right-5 text-2xl font-semibold text-yellow-400 bg-gray-800/50 backdrop-blur-md p-3 rounded-2xl shadow-md border border-gray-700 flex items-center gap-2">
+                <i class="far fa-clock"></i> <span id="time"></span>
+            </div>
+            <div class="text-gray-300 font-medium text-4xl mb-4" id="carro">---</div>
+            <div class="text-yellow-400 font-extrabold text-7xl lg:text-8xl mb-4 tracking-widest drop-shadow-[0_0_15px_rgba(250,204,21,0.4)] transition-all duration-300" id="placa">---</div>
+            <div class="text-white font-semibold text-3xl lg:text-4xl drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] transition-all duration-300" id="servico">---</div>
+        </div>
+
+        <div id="proximos" class="proximos flex-grow flex flex-col gap-4">
+            <div id="prox1" class="card glass-panel p-5 flex flex-col justify-center items-center shadow-md transition-all duration-300">
+                <div class="text-gray-300 text-lg mb-1" id="carro-prox1">---</div>
+                <div class="text-yellow-400 text-xl font-bold mb-1 tracking-wider" id="placa-prox1">---</div>
+                <div class="text-white text-base" id="servico-prox1">---</div>
+            </div>
+            <div id="prox2" class="card glass-panel p-5 flex flex-col justify-center items-center shadow-md transition-all duration-300">
+                <div class="text-gray-300 text-lg mb-1" id="carro-prox2">---</div>
+                <div class="text-yellow-400 text-xl font-bold mb-1 tracking-wider" id="placa-prox2">---</div>
+                <div class="text-white text-base" id="servico-prox2">---</div>
+            </div>
+            <div id="prox3" class="card glass-panel p-5 flex flex-col justify-center items-center shadow-md transition-all duration-300">
+                <div class="text-gray-300 text-lg mb-1" id="carro-prox3">---</div>
+                <div class="text-yellow-400 text-xl font-bold mb-1 tracking-wider" id="placa-prox3">---</div>
+                <div class="text-white text-base" id="servico-prox3">---</div>
+            </div>
+            <div id="prox4" class="card glass-panel p-5 flex flex-col justify-center items-center shadow-md transition-all duration-300">
+                <div class="text-gray-300 text-lg mb-1" id="carro-prox4">---</div>
+                <div class="text-yellow-400 text-xl font-bold mb-1 tracking-wider" id="placa-prox4">---</div>
+                <div class="text-white text-base" id="servico-prox4">---</div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="mensagens-container" class="painel-mensagens glass-panel h-32 flex justify-center items-center shadow-md text-yellow-400 font-bold text-3xl p-6 overflow-hidden relative">
+        <div class="mensagem-anim">Bem-vindo à Auri Autopeças!</div>
+    </div>
+
+    <div class="status-bar flex justify-between items-center text-gray-400 text-base">
+        <div>Próximo atendimento:</div>
+        <div class="status-indicator flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-yellow-400 animate-pulse"></div>
+            <span id="status">Conectado</span>
+        </div>
+    </div>
+</div>
+
+<audio id="alerta" src="beep.mp3" preload="auto"></audio>
+
+<script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzlYQP7IMlvhI7N9bahgUkTRTPDd3AhoCzDnf36dg2uYfC3b1-y_QGBQYEZvfwH1BldOA/exec";
+    let ultimoId = "";
+
+    const frases = [
+        "Bem-vindo ao atendimento!",
+        "Aguarde sua vez com paciência.",
+        "Estamos prontos para atendê-lo.",
+        "Verifique seu número no painel.",
+        "Obrigado por escolher Auri Autopeças.",
+        "Nosso Tel: 84 3087.0000",
+        "Sua vez chegará em breve."
+    ];
+
+    function idChave(obj){
+        return [obj?.carro, obj?.placa, obj?.servico].filter(Boolean).join("|");
+    }
+
+    function atualizarProximos(proximos) {
+        for (let i = 0; i < 4; i++) {
+            const card = document.getElementById(`prox${i+1}`);
+            const cliente = proximos[i] || {};
+            
+            card.querySelector(`#carro-prox${i+1}`).innerText = cliente.carro || "---";
+            card.querySelector(`#placa-prox${i+1}`).innerText = cliente.placa || "---";
+            card.querySelector(`#servico-prox${i+1}`).innerText = cliente.servico || "---";
+            
+            card.classList.remove("gradient-border");
+            
+            if (i === 0 && cliente && (cliente.carro || cliente.placa || cliente.servico)) {
+                card.classList.add("gradient-border");
+            }
+        }
+    }
+
+    async function atualizarPainel() {
+        try {
+            const resp = await fetch(API_URL, { cache: "no-store" });
+            const data = await resp.json();
+
+            if (data.ok && data.next && data.next.length > 0) {
+                const principal = data.next[0];
+                const atualId = idChave(principal);
+                const mudou = atualId && atualId !== ultimoId;
+                
+                document.getElementById("carro").innerText = principal.carro || "---";
+                document.getElementById("placa").innerText = principal.placa || "---";
+                document.getElementById("servico").innerText = principal.servico || "---";
+
+                if (mudou) {
+                    document.getElementById("alerta").play().catch(()=>{});
+                    const principalEl = document.getElementById("principal");
+                    
+                    principalEl.style.animation = 'none';
+                    void principalEl.offsetWidth;
+                    principalEl.style.animation = 'flip-and-flash 1.5s ease-out 1';
+                    
+                    setTimeout(() => {
+                        principalEl.style.animation = 'pulse-subtle 6s ease-in-out infinite';
+                    }, 1500);
+
+                    ultimoId = atualId;
+                }
+
+                atualizarProximos(data.next.slice(1, 5));
+                document.getElementById("status").innerText = "Conectado";
+            }
+        } catch (e) {
+            console.error("Erro:", e);
+            document.getElementById("status").innerText = "Erro de conexão";
+        }
+    }
+
+    function exibirMensagem() {
+        const container = document.getElementById("mensagens-container");
+        const msgText = frases[Math.floor(Math.random()*frases.length)];
+        const msg = document.createElement("div");
+        msg.classList.add("mensagem-anim");
+        msg.innerText = msgText;
+
+        const direcoes = ["anim-cimas","anim-baixo","anim-esq","anim-dir"];
+        const direcao = direcoes[Math.floor(Math.random()*direcoes.length)];
+        msg.style.animation = `${direcao} 1.5s forwards`;
+
+        container.innerHTML = '';
+        container.appendChild(msg);
     }
 
     function atualizarRelogio() {

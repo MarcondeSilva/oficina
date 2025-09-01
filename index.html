@@ -71,14 +71,14 @@
             50% { transform: scale(1.005); opacity: 0.98; }
         }
 
-        /* Animação de piscar para o próximo da fila */
+        /* Animação de piscar para o próximo da fila - BORDA MAIS FINA */
         @keyframes pulse-border {
             0%, 100% { 
-                box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.5);
+                box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.5);
                 border-color: rgba(250, 204, 21, 0.5);
             }
             50% { 
-                box-shadow: 0 0 0 6px rgba(250, 204, 21, 0.8);
+                box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.8);
                 border-color: rgba(250, 204, 21, 1);
             }
         }
@@ -89,6 +89,43 @@
 
         .mensagem-anim {
             animation: fadeIn 0.8s ease;
+        }
+        
+        /* Animações de slide para as mensagens */
+        .slide-top {
+            animation: slideInFromTop 1s ease forwards;
+        }
+        
+        .slide-bottom {
+            animation: slideInFromBottom 1s ease forwards;
+        }
+        
+        .slide-left {
+            animation: slideInFromLeft 1s ease forwards;
+        }
+        
+        .slide-right {
+            animation: slideInFromRight 1s ease forwards;
+        }
+        
+        @keyframes slideInFromTop {
+            0% { transform: translateY(-100%); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes slideInFromBottom {
+            0% { transform: translateY(100%); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes slideInFromLeft {
+            0% { transform: translateX(-100%); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideInFromRight {
+            0% { transform: translateX(100%); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
         }
         
         .anim-cimas { animation: entrarCima 1.5s forwards; }
@@ -107,10 +144,10 @@
             animation: pulse-subtle 6s ease-in-out infinite;
         }
 
-        /* Estilo para o próximo da fila com animação piscante */
+        /* Estilo para o próximo da fila com animação piscante - BORDA MAIS FINA */
         .proximo-destaque {
             border-radius: 2rem;
-            border: 3px solid #facc15;
+            border: 1px solid #facc15; /* Borda mais fina */
             animation: pulse-border 2s ease-in-out infinite;
         }
 
@@ -287,15 +324,24 @@
         const container = document.getElementById("mensagens-container");
         const msgText = frases[Math.floor(Math.random()*frases.length)];
         const msg = document.createElement("div");
-        msg.classList.add("mensagem-anim");
         msg.innerText = msgText;
 
-        const direcoes = ["anim-cimas","anim-baixo","anim-esq","anim-dir"];
-        const direcao = direcoes[Math.floor(Math.random()*direcoes.length)];
-        msg.style.animation = `${direcao} 1.5s forwards`;
+        // Tipos de animação de slide
+        const slideAnimations = ["slide-top", "slide-bottom", "slide-left", "slide-right"];
+        const slideAnimation = slideAnimations[Math.floor(Math.random()*slideAnimations.length)];
+        
+        msg.classList.add(slideAnimation);
+        msg.style.position = "absolute";
+        msg.style.width = "100%";
+        msg.style.textAlign = "center";
 
         container.innerHTML = '';
         container.appendChild(msg);
+        
+        // Remove a animação após completar para permitir nova animação
+        setTimeout(() => {
+            msg.classList.remove(slideAnimation);
+        }, 1000);
     }
 
     function atualizarRelogio() {
@@ -311,6 +357,7 @@
         setInterval(exibirMensagem, 5000);
         atualizarRelogio();
         atualizarPainel();
+        exibirMensagem();
     }
 </script>
 </body>

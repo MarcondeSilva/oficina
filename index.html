@@ -67,8 +67,16 @@
         
         /* Nova animação sutil para o painel principal */
         @keyframes pulse-subtle {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.005); opacity: 0.98; }
+            0%, 100% { 
+                transform: scale(1); 
+                opacity: 1; 
+                box-shadow: 0 0 0 1px rgba(160, 160, 160, 0.3);
+            }
+            50% { 
+                transform: scale(1.002); 
+                opacity: 0.99; 
+                box-shadow: 0 0 0 2px rgba(160, 160, 160, 0.5);
+            }
         }
 
         /* Animação de piscar para o próximo da fila - BORDA MAIS FINA */
@@ -141,7 +149,8 @@
 
         /* Aplica a nova animação ao painel principal */
         #principal.glass-panel {
-            animation: pulse-subtle 6s ease-in-out infinite;
+            animation: pulse-subtle 4s ease-in-out infinite;
+            border: 1px solid rgba(160, 160, 160, 0.4); /* Borda cinza suave */
         }
 
         /* Estilo para o próximo da fila com animação piscante - BORDA MAIS FINA */
@@ -149,6 +158,16 @@
             border-radius: 2rem;
             border: 1px solid #facc15; /* Borda mais fina */
             animation: pulse-border 2s ease-in-out infinite;
+        }
+
+        /* Borda cinza para os cards laterais */
+        .card.glass-panel {
+            border: 1px solid rgba(160, 160, 160, 0.3);
+        }
+
+        /* Borda cinza para o painel de mensagens */
+        .painel-mensagens.glass-panel {
+            border: 1px solid rgba(160, 160, 160, 0.3);
         }
 
         /* Estilos do overlay inicial */
@@ -307,7 +326,7 @@
                     principalEl.style.animation = 'flip-and-flash 1.5s ease-out 1';
                     
                     setTimeout(() => {
-                        principalEl.style.animation = 'pulse-subtle 6s ease-in-out infinite';
+                        principalEl.style.animation = 'pulse-subtle 4s ease-in-out infinite';
                     }, 1500);
 
                     ultimoId = atualId;

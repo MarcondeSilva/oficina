@@ -3,384 +3,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel TV Atendimento - Auri Autopeças</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <title>Painel de Chamadas - Auri Auto Peças</title>
     <style>
+        :root {
+            --bg: #050a14;
+            --gold: #d4af37;
+            --glass: rgba(255, 255, 255, 0.06);
+            --white: #ffffff;
+            --neon: rgba(212, 175, 55, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Glassmorphism Effect */
-        .glass-panel {
-            background-color: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 2rem;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .glass-panel::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
-            z-index: -1;
-        }
-        
-        .header-bg {
-            background: linear-gradient(to right, #1a202c, #2d3748);
-        }
-        
-        /* Borda com cantos arredondados */
-        .gradient-border {
-            border-image: linear-gradient(to right, #facc15, #fde047) 1;
-            border-width: 2px;
-            border-style: solid;
-            border-radius: 2rem;
-        }
-        
-        /* Animação radical de flip vertical e brilho */
-        @keyframes flip-and-flash {
-            0% { 
-                transform: rotateX(0deg) scale(1);
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 0 rgba(250, 204, 21, 0); 
-            }
-            50% { 
-                transform: rotateX(180deg) scale(1.02); 
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 50px rgba(250, 204, 21, 0.8);
-            }
-            100% { 
-                transform: rotateX(360deg) scale(1); 
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 0 rgba(250, 204, 21, 0); 
-            }
-        }
-        
-        /* Nova animação sutil para o painel principal */
-        @keyframes pulse-subtle {
-            0%, 100% { 
-                transform: scale(1); 
-                opacity: 1; 
-                box-shadow: 0 0 0 1px rgba(160, 160, 160, 0.3);
-            }
-            50% { 
-                transform: scale(1.002); 
-                opacity: 0.99; 
-                box-shadow: 0 0 0 2px rgba(160, 160, 160, 0.5);
-            }
-        }
-
-        /* Animação de piscar para o próximo da fila - BORDA MAIS FINA */
-        @keyframes pulse-border {
-            0%, 100% { 
-                box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.5);
-                border-color: rgba(250, 204, 21, 0.5);
-            }
-            50% { 
-                box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.8);
-                border-color: rgba(250, 204, 21, 1);
-            }
-        }
-
-        .flash {
-            animation: flip-and-flash 1.5s ease-out 1;
-        }
-
-        .mensagem-anim {
-            animation: fadeIn 0.8s ease;
-        }
-        
-        /* Animações de slide para as mensagens */
-        .slide-top {
-            animation: slideInFromTop 1s ease forwards;
-        }
-        
-        .slide-bottom {
-            animation: slideInFromBottom 1s ease forwards;
-        }
-        
-        .slide-left {
-            animation: slideInFromLeft 1s ease forwards;
-        }
-        
-        .slide-right {
-            animation: slideInFromRight 1s ease forwards;
-        }
-        
-        @keyframes slideInFromTop {
-            0% { transform: translateY(-100%); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-        
-        @keyframes slideInFromBottom {
-            0% { transform: translateY(100%); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-        
-        @keyframes slideInFromLeft {
-            0% { transform: translateX(-100%); opacity: 0; }
-            100% { transform: translateX(0); opacity: 1; }
-        }
-        
-        @keyframes slideInFromRight {
-            0% { transform: translateX(100%); opacity: 0; }
-            100% { transform: translateX(0); opacity: 1; }
-        }
-        
-        .anim-cimas { animation: entrarCima 1.5s forwards; }
-        .anim-baixo { animation: entrarBaixo 1.5s forwards; }
-        .anim-esq { animation: entrarEsq 1.5s forwards; }
-        .anim-dir { animation: entrarDir 1.5s forwards; }
-        @keyframes entrarCima { 0%{transform:translateY(-120%);opacity:0} 50%{opacity:1} 100%{transform:translateY(0);opacity:1} }
-        @keyframes entrarBaixo { 0%{transform:translateY(120%);opacity:0} 50%{opacity:1} 100%{transform:translateY(0);opacity:1} }
-        @keyframes entrarEsq { 0%{transform:translateX(-120%);opacity:0} 50%{opacity:1} 100%{transform:translateX(0);opacity:1} }
-        @keyframes entrarDir { 0%{transform:translateX(120%);opacity:0} 50%{opacity:1} 100%{transform:translateX(0);opacity:1} }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
-
-
-        /* Aplica a nova animação ao painel principal */
-        #principal.glass-panel {
-            animation: pulse-subtle 4s ease-in-out infinite;
-            border: 1px solid rgba(160, 160, 160, 0.4); /* Borda cinza suave */
-        }
-
-        /* Estilo para o próximo da fila com animação piscante - BORDA MAIS FINA */
-        .proximo-destaque {
-            border-radius: 2rem;
-            border: 1px solid #facc15; /* Borda mais fina */
-            animation: pulse-border 2s ease-in-out infinite;
-        }
-
-        /* Borda cinza para os cards laterais */
-        .card.glass-panel {
-            border: 1px solid rgba(160, 160, 160, 0.3);
-        }
-
-        /* Borda cinza para o painel de mensagens */
-        .painel-mensagens.glass-panel {
-            border: 1px solid rgba(160, 160, 160, 0.3);
-        }
-
-        /* Estilos do overlay inicial */
-        #overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
+            background-color: var(--bg);
+            background: radial-gradient(circle at center, #0a162b 0%, #050a14 100%);
+            color: var(--white);
+            height: 100vh;
+            width: 100vw;
             display: flex;
+            align-items: center; 
             justify-content: center;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 6.5fr 3.5fr;
+            gap: 30px;
+            width: 95vw;
+            max-width: 1800px;
+            align-items: start;
+        }
+
+        .header-label {
+            color: var(--gold);
+            text-transform: uppercase;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 4px;
+            margin-bottom: 15px;
+            display: flex;
             align-items: center;
-            z-index: 100;
-            transition: opacity 0.5s ease-in-out;
-        }
-        #overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
+            gap: 10px;
         }
 
-        #startButton {
-            padding: 1.5rem 3rem;
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: black;
-            background-color: #facc15;
-            border-radius: 1rem;
-            box-shadow: 0 0 20px rgba(250, 204, 21, 0.6);
-            transition: transform 0.2s, box-shadow 0.2s;
+        .header-label::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, var(--gold), transparent);
+            opacity: 0.5;
         }
 
-        #startButton:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(250, 204, 21, 0.8);
+        .col-principal { display: flex; flex-direction: column; }
+
+        .container-principal {
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 50px 40px;
+            min-height: 75vh;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.02);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .container-principal::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.03), transparent);
+            transform: rotate(45deg);
+            animation: shine 6s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .fade-up { animation: fadeUp 0.6s ease-out forwards; }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .nome-cliente {
+            font-size: clamp(1rem, 2vw, 1.8rem);
+            color: var(--gold);
+            font-weight: 400;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+
+        .veiculo-modelo {
+            font-size: clamp(2rem, 5vw, 4.5rem); 
+            font-weight: 700; 
+            text-transform: uppercase;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            background: linear-gradient(to bottom, #ffffff 40%, #aaaaaa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+            letter-spacing: 1px;
+        }
+
+        .placa-container {
+            background: #ffffff;
+            color: #000000;
+            padding: 10px 70px;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 900;
+            border: 5px solid #222;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .placa-container::after, .placa-container::before {
+            content: ""; position: absolute; width: 8px; height: 8px; background: #555; border-radius: 50%; top: 50%; transform: translateY(-50%);
+        }
+        .placa-container::before { left: 15px; }
+        .placa-container::after { right: 15px; }
+
+        .instrucao-guiche { font-size: clamp(1.8rem, 3.5vw, 3.5rem); font-weight: 300; }
+
+        .col-historico { display: flex; flex-direction: column; }
+        .historico-lista { display: flex; flex-direction: column; gap: 12px; }
+
+        /* ESTILIZAÇÃO DO HISTÓRICO COM NOMES E DATA MAIS ACESOS */
+        .card-historico {
+            background: rgba(255, 255, 255, 0.04);
+            border-left: 5px solid var(--gold);
+            padding: 15px 18px;
+            border-radius: 12px;
+            animation: slideIn 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            width: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .hist-veiculo { font-size: 1.1rem; font-weight: 700; text-transform: uppercase; color: #aaa; line-height: 1.2; }
+        .hist-placa { font-family: monospace; font-weight: bold; color: var(--gold); font-size: 1rem; letter-spacing: 1px; margin-bottom: 2px; }
+        
+        /* Nome do condutor agora em branco puro e mais forte */
+        .hist-nome { 
+            font-size: 0.9rem; 
+            color: #ffffff; 
+            text-transform: uppercase; 
+            display: block; 
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
         
+        /* Data e hora agora mais nítidas */
+        .hist-data-hora {
+            position: absolute;
+            bottom: 8px;
+            right: 12px;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.7); 
+            font-weight: 600;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .chamada-nova { animation: pulseNeon 1.5s infinite ease-in-out; }
+        @keyframes pulseNeon {
+            0% { border-color: rgba(255,255,255,0.1); box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+            50% { border-color: var(--gold); box-shadow: 0 0 40px var(--neon); }
+            100% { border-color: rgba(255,255,255,0.1); box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        }
     </style>
 </head>
-<body class="bg-gray-950 text-white min-h-screen flex items-center justify-center p-4">
+<body>
 
-<div id="overlay">
-    <button id="startButton" onclick="iniciarPainel()">INICIAR PAINEL</button>
-</div>
-
-<div class="container relative w-full h-[95vh] max-w-7xl mx-auto flex flex-col gap-5 rounded-[2rem] p-8 shadow-2xl bg-gray-900 border border-gray-700">
-    <div class="header flex justify-between items-center pb-5 border-b border-gray-700 h-[70px]">
-        <div class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center gap-3">
-            <i class="fas fa-car-side text-white"></i> Auri Autopeças
-        </div>
-        <div class="text-gray-400 flex items-center gap-2 text-lg">
-            <i class="fas fa-phone-alt text-yellow-400"></i> Tel: 84 3087.0000
-        </div>
-    </div>
-    
-    <div class="main-content flex flex-col lg:flex-row gap-5 h-[calc(100%-70px-4rem)]">
-        <div id="principal" class="principal relative flex-grow glass-panel p-8 flex flex-col justify-center items-center overflow-hidden transition-all duration-300">
-            <div id="relogio" class="absolute top-5 right-5 text-2xl font-semibold text-yellow-400 bg-gray-800/50 backdrop-blur-md p-3 rounded-2xl shadow-md border border-gray-700 flex items-center gap-2">
-                <i class="far fa-clock"></i> <span id="time"></span>
+    <div class="main-layout">
+        <div class="col-principal">
+            <span class="header-label">Atendimento Atual</span>
+            <div class="container-principal" id="painelPrincipal">
+                <div class="nome-cliente fade-up" id="campoNome">Aguardando...</div>
+                <div class="veiculo-modelo fade-up" id="campoVeiculo">---</div>
+                <div class="placa-container fade-up" id="campoPlaca">-------</div>
+                <div class="instrucao-guiche fade-up">
+                    Dirija-se ao <span id="campoGuiche" style="color:var(--gold); font-weight:900;">---</span>
+                </div>
             </div>
-            <div class="text-gray-300 font-medium text-4xl mb-4" id="carro">---</div>
-            <div class="text-yellow-400 font-extrabold text-7xl lg:text-8xl mb-4 tracking-widest transition-all duration-300" id="placa">---</div>
-            <div class="text-white font-semibold text-3xl lg:text-4xl drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] transition-all duration-300" id="servico">---</div>
         </div>
 
-        <div id="proximos" class="proximos flex-grow flex flex-col gap-4">
-            <div id="prox1" class="card glass-panel p-5 flex flex-col justify-center items-center shadow-md transition-all duration-300">
-                <div class="text-gray-300 text-lg mb-1" id="carro-prox1">---</div>
-                <div class="text-yellow-400 text-xl font-bold mb-1 tracking-wider" id="placa-prox1">---</div>
-                <div class="text-white text-base" id="servico-prox1">---</div>
-            </div>
-            <div id="prox2" class="card glass-panel p-5 flex flex-col justify-center items-center shadow-md transition-all duration-300">
-                <div class="text-gray-300 text-lg mb-1" id="carro-prox2">---</div>
-                <div class="text-yellow-400 text-xl font-bold mb-1 tracking-wider" id="placa-prox2">---</div>
-                <div class="text-white text-base" id="servico-prox2">---</div>
-            </div>
-            <div id="prox3" class="card glass-panel p-5 flex flex-col justify-center items-center shadow-md transition-all duration-300">
-                <div class="text-gray-300 text-lg mb-1" id="carro-prox3">---</div>
-                <div class="text-yellow-400 text-xl font-bold mb-1 tracking-wider" id="placa-prox3">---</div>
-                <div class="text-white text-base" id="servico-prox3">---</div>
-            </div>
-            <div id="prox4" class="card glass-panel p-5 flex flex-col justify-center items-center shadow-md transition-all duration-300">
-                <div class="text-gray-300 text-lg mb-1" id="carro-prox4">---</div>
-                <div class="text-yellow-400 text-xl font-bold mb-1 tracking-wider" id="placa-prox4">---</div>
-                <div class="text-white text-base" id="servico-prox4">---</div>
-            </div>
+        <div class="col-historico">
+            <span class="header-label" style="justify-content: center;">Histórico Recente</span>
+            <div id="listaHistorico" class="historico-lista"></div>
         </div>
     </div>
-    
-    <div id="mensagens-container" class="painel-mensagens glass-panel h-32 flex justify-center items-center shadow-md text-yellow-400 font-bold text-3xl p-6 overflow-hidden relative">
-        <div class="mensagem-anim">Bem-vindo à Auri Autopeças!</div>
-    </div>
-</div>
 
-<audio id="alerta" src="beep.mp3" preload="auto"></audio>
+    <audio id="audioChamada" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
-<script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzlYQP7IMlvhI7N9bahgUkTRTPDd3AhoCzDnf36dg2uYfC3b1-y_QGBQYEZvfwH1BldOA/exec";
-    let ultimoId = "";
+    <script>
+        const urlFinal = 'https://script.google.com/macros/s/AKfycbxBIPiuBZH0Wpo93secDk_ZMAsD_YYE-VkFumVJNgdCeA-rZpQ1BoKJG6c9Hv0ueyjsWA/exec';
+        let ultimoIdRecebido = "";
+        let historico = [];
 
-    const frases = [
-        "Bem-vindos ao nosso atendimento!",
-        "Aguarde sua vez com paciência.",
-        "Estamos prontos para atendê-lo.",
-        "Não é permitido fumar neste local.",
-        "Verifique seu número no painel.",
-        "A vida pede calma; desacelere. Você é importante.",
-        "Obrigado por escolher Auri Autopeças.",
-        "Disk peças Tel: 84 3087.0000",
-        "Sua vez chegará em breve."
-    ];
-
-    function idChave(obj){
-        return [obj?.carro, obj?.placa, obj?.servico].filter(Boolean).join("|");
-    }
-
-    function atualizarProximos(proximos) {
-        for (let i = 0; i < 4; i++) {
-            const card = document.getElementById(`prox${i+1}`);
-            const cliente = proximos[i] || {};
-            
-            card.querySelector(`#carro-prox${i+1}`).innerText = cliente.carro || "---";
-            card.querySelector(`#placa-prox${i+1}`).innerText = cliente.placa || "---";
-            card.querySelector(`#servico-prox${i+1}`).innerText = cliente.servico || "---";
-            
-            // Remove todas as classes de destaque
-            card.classList.remove("gradient-border");
-            card.classList.remove("proximo-destaque");
-            
-            if (i === 0 && cliente && (cliente.carro || cliente.placa || cliente.servico)) {
-                // Adiciona a classe de borda arredondada com animação piscante
-                card.classList.add("proximo-destaque");
+        function limparTexto(valor) {
+            if (!valor) return "";
+            if (typeof valor === 'object' && valor instanceof Date) return "";
+            let texto = valor.toString().trim();
+            const regexData = /(\d{4}-\d{2}-\d{2}|GMT|00:00:00|T\d{2}:\d{2})/;
+            if (regexData.test(texto)) {
+                let partes = texto.split(regexData);
+                let apenasTexto = partes[0].trim();
+                return apenasTexto.length > 0 ? apenasTexto.toUpperCase() : "";
             }
+            return texto.toUpperCase().trim();
         }
-    }
 
-    async function atualizarPainel() {
-        try {
-            const resp = await fetch(API_URL, { cache: "no-store" });
-            const data = await resp.json();
+        async function atualizarPainel() {
+            try {
+                const response = await fetch(`${urlFinal}?read=atual&t=${Date.now()}`);
+                const dados = await response.json();
 
-            if (data.ok && data.next && data.next.length > 0) {
-                const principal = data.next[0];
-                const atualId = idChave(principal);
-                const mudou = atualId && atualId !== ultimoId;
-                
-                document.getElementById("carro").innerText = principal.carro || "---";
-                document.getElementById("placa").innerText = principal.placa || "---";
-                document.getElementById("servico").innerText = principal.servico || "---";
-
-                if (mudou) {
-                    document.getElementById("alerta").play().catch(()=>{});
-                    const principalEl = document.getElementById("principal");
+                if (dados.idUnico !== ultimoIdRecebido) {
+                    const painel = document.getElementById('painelPrincipal');
                     
-                    principalEl.style.animation = 'none';
-                    void principalEl.offsetWidth;
-                    principalEl.style.animation = 'flip-and-flash 1.5s ease-out 1';
-                    
-                    setTimeout(() => {
-                        principalEl.style.animation = 'pulse-subtle 4s ease-in-out infinite';
-                    }, 1500);
+                    if (ultimoIdRecebido !== "") {
+                        const agora = new Date();
+                        const tempo = `${agora.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'})} | ${agora.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}`;
 
-                    ultimoId = atualId;
+                        adicionarAoHistorico({
+                            nome: document.getElementById('campoNome').innerText,
+                            veiculo: document.getElementById('campoVeiculo').innerText,
+                            placa: document.getElementById('campoPlaca').innerText,
+                            tempo: tempo
+                        });
+                        
+                        const som = document.getElementById('audioChamada');
+                        som.currentTime = 0;
+                        som.play().catch(() => {});
+
+                        painel.classList.add('chamada-nova');
+                        setTimeout(() => painel.classList.remove('chamada-nova'), 4500);
+                    }
+
+                    const elementos = painel.querySelectorAll('.fade-up');
+                    elementos.forEach(el => {
+                        el.style.animation = 'none';
+                        el.offsetHeight; 
+                        el.style.animation = null;
+                    });
+
+                    const condutor = limparTexto(dados.condutor) || "CLIENTE";
+                    const marca = limparTexto(dados.carro || "");
+                    const modelo = limparTexto(dados.veiculo || "");
+                    const placa = limparTexto(dados.placa) || "-------";
+                    const veiculoCompleto = `${marca} ${modelo}`.trim() || "---";
+
+                    document.getElementById('campoNome').innerText = condutor;
+                    document.getElementById('campoVeiculo').innerText = veiculoCompleto;
+                    document.getElementById('campoPlaca').innerText = placa;
+                    
+                    let guicheTexto = dados.guiche.toString().toUpperCase();
+                    document.getElementById('campoGuiche').innerText = guicheTexto.includes("GUICHÊ") ? guicheTexto : "GUICHÊ " + guicheTexto;
+
+                    ultimoIdRecebido = dados.idUnico;
                 }
-
-                atualizarProximos(data.next.slice(1, 5));
-            }
-        } catch (e) {
-            console.error("Erro:", e);
+            } catch (error) { console.error("Erro:", error); }
         }
-    }
 
-    function exibirMensagem() {
-        const container = document.getElementById("mensagens-container");
-        const msgText = frases[Math.floor(Math.random()*frases.length)];
-        const msg = document.createElement("div");
-        msg.innerText = msgText;
+        function adicionarAoHistorico(item) {
+            historico.unshift(item);
+            if (historico.length > 5) historico.pop();
+            const container = document.getElementById('listaHistorico');
+            container.innerHTML = "";
+            historico.forEach(h => {
+                const d = document.createElement('div');
+                d.className = 'card-historico';
+                d.innerHTML = `
+                    <span class="hist-veiculo">${h.veiculo}</span>
+                    <span class="hist-placa">${h.placa}</span>
+                    <span class="hist-nome">${h.nome}</span>
+                    <span class="hist-data-hora">${h.tempo}</span>
+                `;
+                container.appendChild(d);
+            });
+        }
 
-        // Tipos de animação de slide
-        const slideAnimations = ["slide-top", "slide-bottom", "slide-left", "slide-right"];
-        const slideAnimation = slideAnimations[Math.floor(Math.random()*slideAnimations.length)];
-        
-        msg.classList.add(slideAnimation);
-        msg.style.position = "absolute";
-        msg.style.width = "100%";
-        msg.style.textAlign = "center";
-
-        container.innerHTML = '';
-        container.appendChild(msg);
-        
-        // Remove a animação após completar para permitir nova animação
-        setTimeout(() => {
-            msg.classList.remove(slideAnimation);
-        }, 1000);
-    }
-
-    function atualizarRelogio() {
-        const agora = new Date();
-        document.getElementById("time").innerText = agora.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-    }
-    
-    // Funcao para iniciar o painel
-    function iniciarPainel() {
-        document.getElementById("overlay").classList.add("hidden");
-        setInterval(atualizarRelogio, 1000);
-        setInterval(atualizarPainel, 5000);
-        setInterval(exibirMensagem, 5000);
-        atualizarRelogio();
-        atualizarPainel();
-        exibirMensagem();
-    }
-</script>
+        setInterval(atualizarPainel, 3000);
+        window.onload = atualizarPainel;
+    </script>
 </body>
 </html>
-

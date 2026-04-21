@@ -8,7 +8,7 @@
         :root {
             --bg: #050a14;
             --gold: #d4af37;
-            --glass: rgba(255, 255, 255, 0.06);
+            --glass: rgba(255, 255, 255, 0.08);
             --white: #ffffff;
             --neon: rgba(212, 175, 55, 0.3);
         }
@@ -26,8 +26,43 @@
             justify-content: center;
             overflow: hidden;
             padding: 20px;
+            perspective: 2000px;
         }
 
+        /* TELA DE SLIDE */
+        #telaSlide {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 10, 20, 0.98);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1.5s ease-in-out, visibility 1.5s;
+            backdrop-filter: blur(10px);
+        }
+
+        #telaSlide.ativo { opacity: 1; visibility: visible; }
+
+        .texto-frase {
+            font-size: clamp(3rem, 6vw, 6rem);
+            font-weight: 700;
+            color: var(--white);
+            text-transform: uppercase;
+            line-height: 1.2;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out;
+        }
+
+        .texto-frase.visivel { opacity: 1; transform: translateY(0); }
+        .texto-frase span { color: var(--gold); }
+
+        /* LAYOUT */
         .main-layout {
             display: grid;
             grid-template-columns: 6.5fr 3.5fr;
@@ -45,19 +80,16 @@
             letter-spacing: 4px;
             margin-bottom: 15px;
             display: flex;
-            align-items: center;
-            gap: 10px;
+            align-items: center; gap: 10px;
         }
 
         .header-label::after {
-            content: "";
-            flex: 1;
-            height: 1px;
+            content: ""; flex: 1; height: 1px;
             background: linear-gradient(to right, var(--gold), transparent);
             opacity: 0.5;
         }
 
-        .col-principal { display: flex; flex-direction: column; }
+        .col-principal { display: flex; flex-direction: column; height: 80vh; }
 
         .container-principal {
             background: var(--glass);
@@ -69,118 +101,81 @@
             justify-content: center;
             text-align: center;
             padding: 50px 40px;
-            min-height: 75vh;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.02);
+            flex-grow: 1;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
             position: relative;
             overflow: hidden;
             backdrop-filter: blur(10px);
+            transform-style: preserve-3d;
         }
 
-        .container-principal::before {
-            content: "";
+        .relogio-container {
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.03), transparent);
-            transform: rotate(45deg);
-            animation: shine 6s infinite;
+            top: 25px; right: 35px;
+            text-align: right; z-index: 10;
         }
 
-        @keyframes shine {
-            0% { transform: translateX(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) rotate(45deg); }
+        #relogio-digital { font-size: 2.5rem; font-weight: 800; color: var(--white); line-height: 1; }
+        #data-digital { font-size: 0.9rem; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; }
+
+        .efeito-virada { animation: flipAnim 0.8s ease-in-out; }
+        @keyframes flipAnim {
+            0% { transform: rotateX(0deg); }
+            50% { transform: rotateX(-90deg); opacity: 0.7; }
+            100% { transform: rotateX(0deg); }
         }
 
-        .fade-up { animation: fadeUp 0.6s ease-out forwards; }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .nome-cliente {
-            font-size: clamp(1rem, 2vw, 1.8rem);
-            color: var(--gold);
-            font-weight: 400;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            letter-spacing: 2px;
-        }
-
+        .nome-cliente { font-size: clamp(1rem, 2vw, 1.8rem); color: var(--gold); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 2px; }
+        
         .veiculo-modelo {
-            font-size: clamp(2rem, 5vw, 4.5rem); 
-            font-weight: 700; 
+            font-size: clamp(2.5rem, 6vw, 5.5rem); 
+            font-weight: 900; 
             text-transform: uppercase;
-            line-height: 1.1;
+            line-height: 1; 
             margin-bottom: 25px;
-            background: linear-gradient(to bottom, #ffffff 40%, #aaaaaa 100%);
-            -webkit-background-clip: text;
+            letter-spacing: -1px;
+            background: linear-gradient(to bottom, #ffffff 30%, #cccccc 60%, #888888 100%);
+            -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
-            letter-spacing: 1px;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.4));
         }
 
         .placa-container {
-            background: #ffffff;
-            color: #000000;
-            padding: 10px 70px;
-            border-radius: 12px;
+            background: #ffffff; color: #000;
+            padding: 10px 70px; border-radius: 12px;
             font-family: 'Courier New', monospace;
-            font-size: clamp(2.5rem, 6vw, 5rem);
-            font-weight: 900;
-            border: 5px solid #222;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            font-size: clamp(2.5rem, 6vw, 5.5rem);
+            font-weight: 900; border: 5px solid #222;
             margin-bottom: 30px;
-            position: relative;
         }
-
-        .placa-container::after, .placa-container::before {
-            content: ""; position: absolute; width: 8px; height: 8px; background: #555; border-radius: 50%; top: 50%; transform: translateY(-50%);
-        }
-        .placa-container::before { left: 15px; }
-        .placa-container::after { right: 15px; }
 
         .instrucao-guiche { font-size: clamp(1.8rem, 3.5vw, 3.5rem); font-weight: 300; }
 
-        .col-historico { display: flex; flex-direction: column; }
-        .historico-lista { display: flex; flex-direction: column; gap: 12px; }
-
-        /* ESTILIZAÇÃO DO HISTÓRICO COM NOMES E DATA MAIS ACESOS */
+        /* ESTILO HISTÓRICO ATUALIZADO */
         .card-historico {
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.07);
             border-left: 5px solid var(--gold);
-            padding: 15px 18px;
-            border-radius: 12px;
-            animation: slideIn 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-            width: 100%;
-            position: relative;
-            display: flex;
+            padding: 15px 20px; border-radius: 12px;
+            margin-bottom: 15px; animation: slideIn 0.5s ease-out;
+            position: relative; 
+            display: flex; 
             flex-direction: column;
-            gap: 2px;
+            min-height: 100px;
         }
 
-        .hist-veiculo { font-size: 1.1rem; font-weight: 700; text-transform: uppercase; color: #aaa; line-height: 1.2; }
-        .hist-placa { font-family: monospace; font-weight: bold; color: var(--gold); font-size: 1rem; letter-spacing: 1px; margin-bottom: 2px; }
+        .hist-veiculo { font-size: 1.1rem; font-weight: 700; color: #eee; text-transform: uppercase; margin-bottom: 2px; }
+        .hist-placa { color: var(--gold); font-weight: 800; font-size: 1.2rem; font-family: monospace; letter-spacing: 1px; margin-bottom: 2px; }
+        .hist-nome-guiche { color: var(--white); font-size: 1rem; font-weight: 700; text-transform: uppercase; opacity: 0.9; }
         
-        /* Nome do condutor agora em branco puro e mais forte */
-        .hist-nome { 
+        /* DATA E HORA NO CANTO INFERIOR DIREITO */
+        .hist-data-hora { 
             font-size: 0.9rem; 
-            color: #ffffff; 
-            text-transform: uppercase; 
-            display: block; 
-            font-weight: 700;
+            color: rgba(255, 255, 255, 0.8); /* Cor branca com leve transparência */
+            font-weight: 400; /* Sem strong */
+            position: absolute; 
+            bottom: 12px; 
+            right: 15px; 
             letter-spacing: 0.5px;
-        }
-        
-        /* Data e hora agora mais nítidas */
-        .hist-data-hora {
-            position: absolute;
-            bottom: 8px;
-            right: 12px;
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.7); 
-            font-weight: 600;
         }
 
         @keyframes slideIn {
@@ -190,30 +185,36 @@
 
         .chamada-nova { animation: pulseNeon 1.5s infinite ease-in-out; }
         @keyframes pulseNeon {
-            0% { border-color: rgba(255,255,255,0.1); box-shadow: 0 0 30px rgba(0,0,0,0.5); }
             50% { border-color: var(--gold); box-shadow: 0 0 40px var(--neon); }
-            100% { border-color: rgba(255,255,255,0.1); box-shadow: 0 0 30px rgba(0,0,0,0.5); }
         }
     </style>
 </head>
 <body>
 
+    <div id="telaSlide">
+        <div id="containerFrase" class="texto-frase"></div>
+    </div>
+
     <div class="main-layout">
         <div class="col-principal">
             <span class="header-label">Atendimento Atual</span>
             <div class="container-principal" id="painelPrincipal">
-                <div class="nome-cliente fade-up" id="campoNome">Aguardando...</div>
-                <div class="veiculo-modelo fade-up" id="campoVeiculo">---</div>
-                <div class="placa-container fade-up" id="campoPlaca">-------</div>
-                <div class="instrucao-guiche fade-up">
-                    Dirija-se ao <span id="campoGuiche" style="color:var(--gold); font-weight:900;">---</span>
+                <div class="relogio-container">
+                    <div id="relogio-digital">00:00</div>
+                    <div id="data-digital">---, 00 ---</div>
+                </div>
+                <div class="nome-cliente" id="campoNome">AURI AUTO PEÇAS</div>
+                <div class="veiculo-modelo" id="campoVeiculo">BEM-VINDO</div>
+                <div class="placa-container" id="campoPlaca">-------</div>
+                <div class="instrucao-guiche">
+                    <span id="campoGuicheCompleto">Dirija-se ao <span id="campoGuiche" style="color:var(--gold); font-weight:900;">Chamada</span></span>
                 </div>
             </div>
         </div>
 
         <div class="col-historico">
             <span class="header-label" style="justify-content: center;">Histórico Recente</span>
-            <div id="listaHistorico" class="historico-lista"></div>
+            <div id="listaHistorico"></div>
         </div>
     </div>
 
@@ -223,6 +224,53 @@
         const urlFinal = 'https://script.google.com/macros/s/AKfycbxBIPiuBZH0Wpo93secDk_ZMAsD_YYE-VkFumVJNgdCeA-rZpQ1BoKJG6c9Hv0ueyjsWA/exec';
         let ultimoIdRecebido = "";
         let historico = [];
+        
+        const frases = [
+            "Bem-vindo à <span>Auri Auto Peças</span>!",
+            "Qualidade e confiança em <span>cada peça</span>.",
+            "O melhor atendimento para o <span>seu veículo</span>.",
+            "Temos as melhores <span>ofertas da região</span>.",
+            "Auri Auto Peças: <span>Sua melhor escolha</span>."
+        ];
+        let fraseAtual = 0;
+        let tempoOcioso = 0;
+        let intervaloSlide;
+
+        function atualizarRelogio() {
+            const agora = new Date();
+            const h = String(agora.getHours()).padStart(2, '0');
+            const m = String(agora.getMinutes()).padStart(2, '0');
+            document.getElementById('relogio-digital').innerText = `${h}:${m}`;
+            const opcoes = { weekday: 'short', day: '2-digit', month: 'short' };
+            document.getElementById('data-digital').innerText = agora.toLocaleDateString('pt-BR', opcoes).toUpperCase().replace('.','');
+        }
+        setInterval(atualizarRelogio, 1000);
+        atualizarRelogio();
+
+        function gerenciarSlide() {
+            const tela = document.getElementById('telaSlide');
+            if (tempoOcioso >= 120) { 
+                if (!tela.classList.contains('ativo')) {
+                    tela.classList.add('ativo');
+                    mudarFrase();
+                    intervaloSlide = setInterval(mudarFrase, 20000);
+                }
+            } else {
+                tela.classList.remove('ativo');
+                document.getElementById('containerFrase').classList.remove('visivel');
+                if(intervaloSlide) clearInterval(intervaloSlide);
+            }
+        }
+
+        function mudarFrase() {
+            const container = document.getElementById('containerFrase');
+            container.classList.remove('visivel');
+            setTimeout(() => {
+                container.innerHTML = frases[fraseAtual];
+                fraseAtual = (fraseAtual + 1) % frases.length;
+                container.classList.add('visivel');
+            }, 1600);
+        }
 
         function limparTexto(valor) {
             if (!valor) return "";
@@ -231,8 +279,7 @@
             const regexData = /(\d{4}-\d{2}-\d{2}|GMT|00:00:00|T\d{2}:\d{2})/;
             if (regexData.test(texto)) {
                 let partes = texto.split(regexData);
-                let apenasTexto = partes[0].trim();
-                return apenasTexto.length > 0 ? apenasTexto.toUpperCase() : "";
+                return (partes[0].trim()).toUpperCase();
             }
             return texto.toUpperCase().trim();
         }
@@ -243,53 +290,58 @@
                 const dados = await response.json();
 
                 if (dados.idUnico !== ultimoIdRecebido) {
-                    const painel = document.getElementById('painelPrincipal');
-                    
-                    if (ultimoIdRecebido !== "") {
-                        const agora = new Date();
-                        const tempo = `${agora.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'})} | ${agora.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}`;
+                    tempoOcioso = 0;
+                    gerenciarSlide();
 
-                        adicionarAoHistorico({
-                            nome: document.getElementById('campoNome').innerText,
-                            veiculo: document.getElementById('campoVeiculo').innerText,
-                            placa: document.getElementById('campoPlaca').innerText,
-                            tempo: tempo
-                        });
-                        
-                        const som = document.getElementById('audioChamada');
-                        som.currentTime = 0;
-                        som.play().catch(() => {});
+                    if (ultimoIdRecebido !== "") {
+                        const painel = document.getElementById('painelPrincipal');
+                        painel.classList.remove('efeito-virada');
+                        void painel.offsetWidth; 
+                        painel.classList.add('efeito-virada');
+                        document.getElementById('audioChamada').play().catch(() => {});
+
+                        setTimeout(() => {
+                            const agora = new Date();
+                            const dia = String(agora.getDate()).padStart(2, '0');
+                            const mes = String(agora.getMonth() + 1).padStart(2, '0');
+                            const hora = String(agora.getHours()).padStart(2, '0');
+                            const min = String(agora.getMinutes()).padStart(2, '0');
+                            const dataHoraStr = `${dia}/${mes} | ${hora}:${min}`;
+
+                            adicionarAoHistorico({
+                                nome: document.getElementById('campoNome').innerText,
+                                veiculo: document.getElementById('campoVeiculo').innerText,
+                                placa: document.getElementById('campoPlaca').innerText,
+                                guiche: document.getElementById('campoGuiche').innerText,
+                                tempo: dataHoraStr
+                            });
+
+                            document.getElementById('campoNome').innerText = limparTexto(dados.condutor) || "CLIENTE";
+                            document.getElementById('campoVeiculo').innerText = `${limparTexto(dados.carro || "")} ${limparTexto(dados.modelo || "")}`.trim();
+                            document.getElementById('campoPlaca').innerText = limparTexto(dados.placa);
+                            
+                            let gLimpo = dados.guiche.toString().toUpperCase().replace("GUICHÊ", "").trim();
+                            document.getElementById('campoGuiche').innerText = "GUICHÊ " + gLimpo;
+                        }, 400);
 
                         painel.classList.add('chamada-nova');
                         setTimeout(() => painel.classList.remove('chamada-nova'), 4500);
+                    } else {
+                        document.getElementById('campoNome').innerText = limparTexto(dados.condutor);
+                        document.getElementById('campoVeiculo').innerText = `${limparTexto(dados.carro || "")} ${limparTexto(dados.modelo || "")}`.trim();
+                        document.getElementById('campoPlaca').innerText = limparTexto(dados.placa);
+                        document.getElementById('campoGuiche').innerText = "GUICHÊ " + dados.guiche.toString().toUpperCase().replace("GUICHÊ", "").trim();
                     }
-
-                    const elementos = painel.querySelectorAll('.fade-up');
-                    elementos.forEach(el => {
-                        el.style.animation = 'none';
-                        el.offsetHeight; 
-                        el.style.animation = null;
-                    });
-
-                    const condutor = limparTexto(dados.condutor) || "CLIENTE";
-                    const marca = limparTexto(dados.carro || "");
-                    const modelo = limparTexto(dados.veiculo || "");
-                    const placa = limparTexto(dados.placa) || "-------";
-                    const veiculoCompleto = `${marca} ${modelo}`.trim() || "---";
-
-                    document.getElementById('campoNome').innerText = condutor;
-                    document.getElementById('campoVeiculo').innerText = veiculoCompleto;
-                    document.getElementById('campoPlaca').innerText = placa;
-                    
-                    let guicheTexto = dados.guiche.toString().toUpperCase();
-                    document.getElementById('campoGuiche').innerText = guicheTexto.includes("GUICHÊ") ? guicheTexto : "GUICHÊ " + guicheTexto;
-
                     ultimoIdRecebido = dados.idUnico;
+                } else {
+                    tempoOcioso += 3;
+                    gerenciarSlide();
                 }
-            } catch (error) { console.error("Erro:", error); }
+            } catch (error) { console.error("Erro na busca:", error); }
         }
 
         function adicionarAoHistorico(item) {
+            if (item.veiculo === "BEM-VINDO" || item.veiculo === "" || item.nome === "AURI AUTO PEÇAS") return;
             historico.unshift(item);
             if (historico.length > 5) historico.pop();
             const container = document.getElementById('listaHistorico');
@@ -300,7 +352,7 @@
                 d.innerHTML = `
                     <span class="hist-veiculo">${h.veiculo}</span>
                     <span class="hist-placa">${h.placa}</span>
-                    <span class="hist-nome">${h.nome}</span>
+                    <span class="hist-nome-guiche">${h.nome} - ${h.guiche}</span>
                     <span class="hist-data-hora">${h.tempo}</span>
                 `;
                 container.appendChild(d);

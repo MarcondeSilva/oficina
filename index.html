@@ -29,38 +29,76 @@
             perspective: 2000px;
         }
 
-        /* TELA DE SLIDE */
+        /* TELA DE SLIDE COM IMAGENS */
         #telaSlide {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 10, 20, 0.98);
+            background: rgba(5, 10, 20, 0.95);
             z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 60px;
             opacity: 0;
             visibility: hidden;
             transition: opacity 1.5s ease-in-out, visibility 1.5s;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(5px);
         }
 
         #telaSlide.ativo { opacity: 1; visibility: visible; }
 
-        .texto-frase {
-            font-size: clamp(3rem, 6vw, 6rem);
-            font-weight: 700;
-            color: var(--white);
-            text-transform: uppercase;
-            line-height: 1.2;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out;
+        .slide-container {
+            width: 90%;
+            max-width: 1200px;
+            height: auto;
+            max-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .texto-frase.visivel { opacity: 1; transform: translateY(0); }
-        .texto-frase span { color: var(--gold); }
+        .slide-container img {
+            width: 100%;
+            height: auto;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
+            animation: fadeInSlide 1.5s ease-in-out;
+        }
+
+        @keyframes fadeInSlide {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .slide-indicador {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            background: rgba(0,0,0,0.6);
+            padding: 10px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+        }
+
+        .slide-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .slide-dot.ativo {
+            background: var(--gold);
+            width: 25px;
+            box-shadow: 0 0 10px var(--gold);
+        }
 
         /* LAYOUT */
         .main-layout {
@@ -167,11 +205,10 @@
         .hist-placa { color: var(--gold); font-weight: 800; font-size: 1.2rem; font-family: monospace; letter-spacing: 1px; margin-bottom: 2px; }
         .hist-nome-guiche { color: var(--white); font-size: 1rem; font-weight: 700; text-transform: uppercase; opacity: 0.9; }
         
-        /* DATA E HORA NO CANTO INFERIOR DIREITO */
         .hist-data-hora { 
             font-size: 0.9rem; 
-            color: rgba(255, 255, 255, 0.8); /* Cor branca com leve transparência */ 
-            font-weight: 400; /* Sem strong */
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
             position: absolute; 
             bottom: 12px; 
             right: 15px; 
@@ -192,7 +229,10 @@
 <body>
 
     <div id="telaSlide">
-        <div id="containerFrase" class="texto-frase"></div>
+        <div class="slide-container">
+            <img id="slideImagem" src="" alt="Slide">
+        </div>
+        <div class="slide-indicador" id="slideIndicador"></div>
     </div>
 
     <div class="main-layout">
@@ -207,7 +247,7 @@
                 <div class="veiculo-modelo" id="campoVeiculo">BEM-VINDO</div>
                 <div class="placa-container" id="campoPlaca">-------</div>
                 <div class="instrucao-guiche">
-                    <span id="campoGuicheCompleto">Dirija-se ao <span id="campoGuiche" style="color:var(--gold); font-weight:900;">Chamada</span></span>
+                    <span id="campoGuicheCompleto">DIRIJA-SE AO <span id="campoGuiche" style="color:var(--gold); font-weight:900;">Chamada</span></span>
                 </div>
             </div>
         </div>
@@ -225,16 +265,32 @@
         let ultimoIdRecebido = "";
         let historico = [];
         
-        const frases = [
-            "Bem-vindo à <span>Auri Auto Peças</span>!",
-            "Qualidade e confiança em <span>cada peça</span>.",
-            "O melhor atendimento para o <span>seu veículo</span>.",
-            "Temos as melhores <span>ofertas da região</span>.",
-            "Auri Auto Peças: <span>Sua melhor escolha</span>."
-        ];
-        let fraseAtual = 0;
+        // Configuração dos slides
+        const slidesOriginal = ["slide1.jpg", "slide2.jpg", "slide3.jpg"];
+        let slides = []; // Lista embaralhada
+        let slideAtual = 0;
         let tempoOcioso = 0;
-        let intervaloSlide;
+        let intervaloSlideImagem;
+        let slideAtivo = false;
+        let pausaEntreSlides = false; // Flag para pausa de 2 minutos após todos os slides
+        let tempoPausa = 0;
+
+        // Função para embaralhar array (Fisher-Yates)
+        function embaralharArray(array) {
+            const novoArray = [...array];
+            for (let i = novoArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [novoArray[i], novoArray[j]] = [novoArray[j], novoArray[i]];
+            }
+            return novoArray;
+        }
+
+        // Reiniciar slides embaralhados
+        function reiniciarSlidesEmbaralhados() {
+            slides = embaralharArray(slidesOriginal);
+            slideAtual = 0;
+            console.log("Slides embaralhados:", slides);
+        }
 
         function atualizarRelogio() {
             const agora = new Date();
@@ -247,29 +303,157 @@
         setInterval(atualizarRelogio, 1000);
         atualizarRelogio();
 
-        function gerenciarSlide() {
-            const tela = document.getElementById('telaSlide');
-            if (tempoOcioso >= 120) { 
-                if (!tela.classList.contains('ativo')) {
-                    tela.classList.add('ativo');
-                    mudarFrase();
-                    intervaloSlide = setInterval(mudarFrase, 20000);
-                }
-            } else {
-                tela.classList.remove('ativo');
-                document.getElementById('containerFrase').classList.remove('visivel');
-                if(intervaloSlide) clearInterval(intervaloSlide);
+        function criarIndicadores() {
+            const container = document.getElementById('slideIndicador');
+            container.innerHTML = '';
+            slides.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.className = 'slide-dot';
+                dot.onclick = () => irParaSlide(index);
+                if (index === slideAtual) dot.classList.add('ativo');
+                container.appendChild(dot);
+            });
+        }
+
+        function irParaSlide(index) {
+            if (!slideAtivo || pausaEntreSlides) return;
+            slideAtual = index;
+            const imgElement = document.getElementById('slideImagem');
+            imgElement.style.animation = 'none';
+            imgElement.offsetHeight;
+            imgElement.style.animation = 'fadeInSlide 1.5s ease-in-out';
+            imgElement.src = slides[slideAtual];
+            atualizarIndicador();
+            
+            // Reinicia o timer de troca automática
+            if (intervaloSlideImagem) {
+                clearInterval(intervaloSlideImagem);
+                iniciarTimerTrocaSlide();
             }
         }
 
-        function mudarFrase() {
-            const container = document.getElementById('containerFrase');
-            container.classList.remove('visivel');
+        function atualizarIndicador() {
+            const dots = document.querySelectorAll('.slide-dot');
+            dots.forEach((dot, index) => {
+                if (index === slideAtual) {
+                    dot.classList.add('ativo');
+                } else {
+                    dot.classList.remove('ativo');
+                }
+            });
+        }
+
+        function avancarSlide() {
+            if (pausaEntreSlides) return;
+            
+            // Verifica se terminou todos os slides
+            if (slideAtual + 1 >= slides.length) {
+                // Terminou todos os slides, inicia pausa de 2 minutos
+                finalizarCicloSlides();
+                return;
+            }
+            
+            // Próximo slide
+            slideAtual++;
+            const imgElement = document.getElementById('slideImagem');
+            imgElement.style.animation = 'none';
+            imgElement.offsetHeight;
+            imgElement.style.animation = 'fadeInSlide 1.5s ease-in-out';
+            imgElement.src = slides[slideAtual];
+            atualizarIndicador();
+        }
+
+        function finalizarCicloSlides() {
+            console.log("Ciclo de slides finalizado, pausa de 2 minutos");
+            
+            // Para o timer de troca de slides
+            if (intervaloSlideImagem) {
+                clearInterval(intervaloSlideImagem);
+                intervaloSlideImagem = null;
+            }
+            
+            // Fecha a tela de slides
+            const tela = document.getElementById('telaSlide');
+            tela.classList.remove('ativo');
+            slideAtivo = false;
+            
+            // Inicia pausa de 2 minutos
+            pausaEntreSlides = true;
+            tempoPausa = 0;
+            
+            // Aguarda 2 minutos (120000 ms) antes de reiniciar os slides
             setTimeout(() => {
-                container.innerHTML = frases[fraseAtual];
-                fraseAtual = (fraseAtual + 1) % frases.length;
-                container.classList.add('visivel');
-            }, 1600);
+                if (pausaEntreSlides && !slideAtivo) {
+                    // Verifica se ainda está ocioso antes de reiniciar
+                    if (tempoOcioso >= 120000) {
+                        console.log("Pausa finalizada, reiniciando slides embaralhados");
+                        reiniciarSlidesEmbaralhados();
+                        iniciarSlides();
+                    } else {
+                        console.log("Pausa finalizada mas houve chamada, não reinicia slides");
+                        pausaEntreSlides = false;
+                    }
+                }
+                pausaEntreSlides = false;
+            }, 120000);
+        }
+
+        function iniciarTimerTrocaSlide() {
+            if (intervaloSlideImagem) clearInterval(intervaloSlideImagem);
+            // Cada slide fica 60 segundos
+            intervaloSlideImagem = setInterval(() => {
+                avancarSlide();
+            }, 20000);
+        }
+
+        function iniciarSlides() {
+            if (pausaEntreSlides) return;
+            
+            const tela = document.getElementById('telaSlide');
+            const imgElement = document.getElementById('slideImagem');
+            
+            // Garante que os slides estão embaralhados
+            if (slides.length === 0) {
+                reiniciarSlidesEmbaralhados();
+            }
+            
+            slideAtual = 0;
+            imgElement.src = slides[0];
+            criarIndicadores();
+            
+            tela.classList.add('ativo');
+            slideAtivo = true;
+            
+            // Inicia timer para troca de slides
+            iniciarTimerTrocaSlide();
+        }
+
+        function pararSlides() {
+            const tela = document.getElementById('telaSlide');
+            tela.classList.remove('ativo');
+            slideAtivo = false;
+            if (intervaloSlideImagem) {
+                clearInterval(intervaloSlideImagem);
+                intervaloSlideImagem = null;
+            }
+        }
+
+        function gerenciarOciosidade() {
+            // Se estiver em pausa entre ciclos de slide, não faz nada
+            if (pausaEntreSlides) return;
+            
+            // 120 segundos = 120000 milissegundos para iniciar os slides
+            if (tempoOcioso >= 120000) { 
+                if (!slideAtivo) {
+                    // Reinicia slides embaralhados quando for começar
+                    reiniciarSlidesEmbaralhados();
+                    iniciarSlides();
+                }
+            } else {
+                if (slideAtivo) {
+                    pararSlides();
+                }
+            }
         }
 
         function limparTexto(valor) {
@@ -290,8 +474,20 @@
                 const dados = await response.json();
 
                 if (dados.idUnico !== ultimoIdRecebido) {
+                    // Reset do tempo de ociosidade quando há nova chamada
                     tempoOcioso = 0;
-                    gerenciarSlide();
+                    
+                    // Interrompe qualquer slide ou pausa em andamento
+                    if (slideAtivo) {
+                        pararSlides();
+                    }
+                    pausaEntreSlides = false;
+                    if (intervaloSlideImagem) {
+                        clearInterval(intervaloSlideImagem);
+                        intervaloSlideImagem = null;
+                    }
+                    
+                    gerenciarOciosidade();
 
                     if (ultimoIdRecebido !== "") {
                         const painel = document.getElementById('painelPrincipal');
@@ -334,8 +530,9 @@
                     }
                     ultimoIdRecebido = dados.idUnico;
                 } else {
-                    tempoOcioso += 3;
-                    gerenciarSlide();
+                    // Incrementa o tempo de ociosidade (a cada 3 segundos)
+                    tempoOcioso += 3000;
+                    gerenciarOciosidade();
                 }
             } catch (error) { console.error("Erro na busca:", error); }
         }
@@ -359,6 +556,8 @@
             });
         }
 
+        // Inicializa
+        reiniciarSlidesEmbaralhados();
         setInterval(atualizarPainel, 3000);
         window.onload = atualizarPainel;
     </script>

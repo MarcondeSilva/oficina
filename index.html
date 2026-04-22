@@ -265,14 +265,20 @@
         let ultimoIdRecebido = "";
         let historico = [];
         
-        // Configuração dos slides
-        const slidesOriginal = ["slide1.png", "slide2.png", "slide3.png"];
+        // Configuração dos slides com URLs externas
+        const slidesOriginal = [
+            "https://www.vonixx.com.br/wp-content/uploads/2023/07/banner-blend-all-in-one-1.webp",
+            "https://www.vonixx.com.br/wp-content/uploads/2023/07/banner-web-veniz-de-motor-15l.png",
+            "https://www.vonixx.com.br/wp-content/uploads/2023/08/banner-web-hidracouro-higicouro.png",
+            "https://www.vonixx.com.br/wp-content/uploads/2025/04/banners-programa-05-o-png.webp"
+        ];
+        
         let slides = []; // Lista embaralhada
         let slideAtual = 0;
         let tempoOcioso = 0;
         let intervaloSlideImagem;
         let slideAtivo = false;
-        let pausaEntreSlides = false; // Flag para pausa de 2 minutos após todos os slides
+        let pausaEntreSlides = false;
         let tempoPausa = 0;
 
         // Função para embaralhar array (Fisher-Yates)
@@ -325,7 +331,6 @@
             imgElement.src = slides[slideAtual];
             atualizarIndicador();
             
-            // Reinicia o timer de troca automática
             if (intervaloSlideImagem) {
                 clearInterval(intervaloSlideImagem);
                 iniciarTimerTrocaSlide();
@@ -346,14 +351,11 @@
         function avancarSlide() {
             if (pausaEntreSlides) return;
             
-            // Verifica se terminou todos os slides
             if (slideAtual + 1 >= slides.length) {
-                // Terminou todos os slides, inicia pausa de 2 minutos
                 finalizarCicloSlides();
                 return;
             }
             
-            // Próximo slide
             slideAtual++;
             const imgElement = document.getElementById('slideImagem');
             imgElement.style.animation = 'none';
@@ -366,25 +368,20 @@
         function finalizarCicloSlides() {
             console.log("Ciclo de slides finalizado, pausa de 2 minutos");
             
-            // Para o timer de troca de slides
             if (intervaloSlideImagem) {
                 clearInterval(intervaloSlideImagem);
                 intervaloSlideImagem = null;
             }
             
-            // Fecha a tela de slides
             const tela = document.getElementById('telaSlide');
             tela.classList.remove('ativo');
             slideAtivo = false;
             
-            // Inicia pausa de 2 minutos
             pausaEntreSlides = true;
             tempoPausa = 0;
             
-            // Aguarda 2 minutos (120000 ms) antes de reiniciar os slides
             setTimeout(() => {
                 if (pausaEntreSlides && !slideAtivo) {
-                    // Verifica se ainda está ocioso antes de reiniciar
                     if (tempoOcioso >= 120000) {
                         console.log("Pausa finalizada, reiniciando slides embaralhados");
                         reiniciarSlidesEmbaralhados();
@@ -400,7 +397,7 @@
 
         function iniciarTimerTrocaSlide() {
             if (intervaloSlideImagem) clearInterval(intervaloSlideImagem);
-            // Cada slide fica 60 segundos
+            // Cada slide fica 15 segundos
             intervaloSlideImagem = setInterval(() => {
                 avancarSlide();
             }, 15000);
@@ -412,7 +409,6 @@
             const tela = document.getElementById('telaSlide');
             const imgElement = document.getElementById('slideImagem');
             
-            // Garante que os slides estão embaralhados
             if (slides.length === 0) {
                 reiniciarSlidesEmbaralhados();
             }
@@ -424,7 +420,6 @@
             tela.classList.add('ativo');
             slideAtivo = true;
             
-            // Inicia timer para troca de slides
             iniciarTimerTrocaSlide();
         }
 
@@ -439,13 +434,10 @@
         }
 
         function gerenciarOciosidade() {
-            // Se estiver em pausa entre ciclos de slide, não faz nada
             if (pausaEntreSlides) return;
             
-            // 120 segundos = 120000 milissegundos para iniciar os slides
             if (tempoOcioso >= 120000) { 
                 if (!slideAtivo) {
-                    // Reinicia slides embaralhados quando for começar
                     reiniciarSlidesEmbaralhados();
                     iniciarSlides();
                 }
@@ -474,10 +466,8 @@
                 const dados = await response.json();
 
                 if (dados.idUnico !== ultimoIdRecebido) {
-                    // Reset do tempo de ociosidade quando há nova chamada
                     tempoOcioso = 0;
                     
-                    // Interrompe qualquer slide ou pausa em andamento
                     if (slideAtivo) {
                         pararSlides();
                     }
@@ -530,7 +520,6 @@
                     }
                     ultimoIdRecebido = dados.idUnico;
                 } else {
-                    // Incrementa o tempo de ociosidade (a cada 3 segundos)
                     tempoOcioso += 3000;
                     gerenciarOciosidade();
                 }

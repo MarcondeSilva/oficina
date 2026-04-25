@@ -189,7 +189,6 @@
 
         .instrucao-guiche { font-size: clamp(1.8rem, 3.5vw, 3.5rem); font-weight: 300; }
 
-        /* ESTILO HISTÓRICO ATUALIZADO */
         .card-historico {
             background: rgba(255, 255, 255, 0.07);
             border-left: 5px solid var(--gold);
@@ -265,7 +264,6 @@
         let ultimoIdRecebido = "";
         let historico = [];
         
-        // Configuração dos slides com URLs externas
         const slidesOriginal = [
             "https://www.vonixx.com.br/wp-content/uploads/2023/07/banner-blend-all-in-one-1.webp",
             "https://www.vonixx.com.br/wp-content/uploads/2023/07/banner-web-veniz-de-motor-15l.png",
@@ -273,19 +271,17 @@
             "https://www.vonixx.com.br/wp-content/uploads/2025/06/programa-09-3.webp",
             "https://www.vonixx.com.br/wp-content/uploads/2023/07/banner-makker-2-0-descktop.webp",
             "https://www.vonixx.com.br/wp-content/uploads/2024/09/lavadora-desktop-jpg.webp",
-            "https://www.vonixx.com.br/wp-content/uploads/2023/08/banner-web-carnauba-plus_.png"
+            "https://www.vonixx.com.br/wp-content/uploads/2023/08/banner-web-carnauba-plus_.png",
             "https://www.vonixx.com.br/wp-content/uploads/2025/04/banners-programa-05-o-png.webp"
         ];
         
-        let slides = []; // Lista embaralhada
+        let slides = []; 
         let slideAtual = 0;
         let tempoOcioso = 0;
         let intervaloSlideImagem;
         let slideAtivo = false;
         let pausaEntreSlides = false;
-        let tempoPausa = 0;
 
-        // Função para embaralhar array (Fisher-Yates)
         function embaralharArray(array) {
             const novoArray = [...array];
             for (let i = novoArray.length - 1; i > 0; i--) {
@@ -295,11 +291,9 @@
             return novoArray;
         }
 
-        // Reiniciar slides embaralhados
         function reiniciarSlidesEmbaralhados() {
             slides = embaralharArray(slidesOriginal);
             slideAtual = 0;
-            console.log("Slides embaralhados:", slides);
         }
 
         function atualizarRelogio() {
@@ -344,22 +338,16 @@
         function atualizarIndicador() {
             const dots = document.querySelectorAll('.slide-dot');
             dots.forEach((dot, index) => {
-                if (index === slideAtual) {
-                    dot.classList.add('ativo');
-                } else {
-                    dot.classList.remove('ativo');
-                }
+                dot.classList.toggle('ativo', index === slideAtual);
             });
         }
 
         function avancarSlide() {
             if (pausaEntreSlides) return;
-            
             if (slideAtual + 1 >= slides.length) {
                 finalizarCicloSlides();
                 return;
             }
-            
             slideAtual++;
             const imgElement = document.getElementById('slideImagem');
             imgElement.style.animation = 'none';
@@ -370,60 +358,39 @@
         }
 
         function finalizarCicloSlides() {
-            console.log("Ciclo de slides finalizado, pausa de 2 minutos");
-            
             if (intervaloSlideImagem) {
                 clearInterval(intervaloSlideImagem);
                 intervaloSlideImagem = null;
             }
-            
             const tela = document.getElementById('telaSlide');
             tela.classList.remove('ativo');
             slideAtivo = false;
-            
             pausaEntreSlides = true;
-            tempoPausa = 0;
             
             setTimeout(() => {
-                if (pausaEntreSlides && !slideAtivo) {
-                    if (tempoOcioso >= 120000) {
-                        console.log("Pausa finalizada, reiniciando slides embaralhados");
-                        reiniciarSlidesEmbaralhados();
-                        iniciarSlides();
-                    } else {
-                        console.log("Pausa finalizada mas houve chamada, não reinicia slides");
-                        pausaEntreSlides = false;
-                    }
-                }
                 pausaEntreSlides = false;
+                if (tempoOcioso >= 120000) {
+                    reiniciarSlidesEmbaralhados();
+                    iniciarSlides();
+                }
             }, 120000);
         }
 
         function iniciarTimerTrocaSlide() {
             if (intervaloSlideImagem) clearInterval(intervaloSlideImagem);
-            // Cada slide fica 15 segundos
-            intervaloSlideImagem = setInterval(() => {
-                avancarSlide();
-            }, 15000);
+            intervaloSlideImagem = setInterval(avancarSlide, 15000);
         }
 
         function iniciarSlides() {
             if (pausaEntreSlides) return;
-            
             const tela = document.getElementById('telaSlide');
             const imgElement = document.getElementById('slideImagem');
-            
-            if (slides.length === 0) {
-                reiniciarSlidesEmbaralhados();
-            }
-            
+            if (slides.length === 0) reiniciarSlidesEmbaralhados();
             slideAtual = 0;
             imgElement.src = slides[0];
             criarIndicadores();
-            
             tela.classList.add('ativo');
             slideAtivo = true;
-            
             iniciarTimerTrocaSlide();
         }
 
@@ -439,49 +406,32 @@
 
         function gerenciarOciosidade() {
             if (pausaEntreSlides) return;
-            
             if (tempoOcioso >= 120000) { 
                 if (!slideAtivo) {
                     reiniciarSlidesEmbaralhados();
                     iniciarSlides();
                 }
             } else {
-                if (slideAtivo) {
-                    pararSlides();
-                }
+                if (slideAtivo) pararSlides();
             }
         }
 
         function limparTexto(valor) {
             if (!valor) return "";
-            if (typeof valor === 'object' && valor instanceof Date) return "";
             let texto = valor.toString().trim();
-            const regexData = /(\d{4}-\d{2}-\d{2}|GMT|00:00:00|T\d{2}:\d{2})/;
-            if (regexData.test(texto)) {
-                let partes = texto.split(regexData);
-                return (partes[0].trim()).toUpperCase();
-            }
-            return texto.toUpperCase().trim();
+            return texto.toUpperCase();
         }
 
         async function atualizarPainel() {
             try {
                 const response = await fetch(`${urlFinal}?read=atual&t=${Date.now()}`);
                 const dados = await response.json();
+                console.log("Dados recebidos:", dados); // Para monitoramento
 
                 if (dados.idUnico !== ultimoIdRecebido) {
                     tempoOcioso = 0;
-                    
-                    if (slideAtivo) {
-                        pararSlides();
-                    }
+                    if (slideAtivo) pararSlides();
                     pausaEntreSlides = false;
-                    if (intervaloSlideImagem) {
-                        clearInterval(intervaloSlideImagem);
-                        intervaloSlideImagem = null;
-                    }
-                    
-                    gerenciarOciosidade();
 
                     if (ultimoIdRecebido !== "") {
                         const painel = document.getElementById('painelPrincipal');
@@ -492,11 +442,7 @@
 
                         setTimeout(() => {
                             const agora = new Date();
-                            const dia = String(agora.getDate()).padStart(2, '0');
-                            const mes = String(agora.getMonth() + 1).padStart(2, '0');
-                            const hora = String(agora.getHours()).padStart(2, '0');
-                            const min = String(agora.getMinutes()).padStart(2, '0');
-                            const dataHoraStr = `${dia}/${mes} | ${hora}:${min}`;
+                            const dataHoraStr = `${String(agora.getDate()).padStart(2, '0')}/${String(agora.getMonth() + 1).padStart(2, '0')} | ${String(agora.getHours()).padStart(2, '0')}:${String(agora.getMinutes()).padStart(2, '0')}`;
 
                             adicionarAoHistorico({
                                 nome: document.getElementById('campoNome').innerText,
@@ -531,7 +477,7 @@
         }
 
         function adicionarAoHistorico(item) {
-            if (item.veiculo === "BEM-VINDO" || item.veiculo === "" || item.nome === "AURI AUTO PEÇAS") return;
+            if (item.veiculo === "BEM-VINDO" || item.nome === "AURI AUTO PEÇAS") return;
             historico.unshift(item);
             if (historico.length > 5) historico.pop();
             const container = document.getElementById('listaHistorico');
@@ -549,7 +495,6 @@
             });
         }
 
-        // Inicializa
         reiniciarSlidesEmbaralhados();
         setInterval(atualizarPainel, 3000);
         window.onload = atualizarPainel;
